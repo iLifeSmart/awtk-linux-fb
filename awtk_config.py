@@ -60,7 +60,7 @@ OS_CPPPATH=[]
 OS_LINKFLAGS=''
 OS_SUBSYSTEM_CONSOLE=''
 OS_SUBSYSTEM_WINDOWS=''
-OS_FLAGS='-Wall -Os '
+OS_FLAGS='-Wall -O2 '
 #OS_FLAGS='-g -Wall -Os -mfloat-abi=hard '
 
 #for build tslib
@@ -68,9 +68,9 @@ OS_FLAGS='-Wall -Os '
 #TSLIB_LIB_DIR=joinPath(TK_LINUX_FB_ROOT, '3rd/tslib/src/.libs')
 
 #for prebuild tslib
-TSLIB_LIB_DIR='/opt/28x/tslib/lib'
-TSLIB_INC_DIR='/opt/28x/tslib/include'
-TOOLS_PREFIX='/opt/28x/gcc-4.4.4-glibc-2.11.1-multilib-1.0/arm-fsl-linux-gnueabi/bin/arm-linux-'
+TSLIB_LIB_DIR='/root/nano/buildroot-2017.08/output/build/tslib-1.21/src/.libs/'
+TSLIB_INC_DIR='/root/nano/buildroot-2017.08/output/build/tslib-1.21/src/'
+TOOLS_PREFIX='/root/nano/buildroot-2017.08/output/host/bin/arm-none-linux-gnueabi-'
 #TOOLS_PREFIX='/opt/poky/1.7/sysroots/x86_64-pokysdk-linux/usr/bin/arm-poky-linux-gnueabi/arm-poky-linux-gnueabi-'
 
 #for pc build
@@ -116,7 +116,7 @@ if TSLIB_LIB_DIR != '':
 CFLAGS=COMMON_CFLAGS
 LINKFLAGS=OS_LINKFLAGS;
 LIBPATH=[LIB_DIR, BIN_DIR] + OS_LIBPATH
-CCFLAGS=OS_FLAGS + COMMON_CCFLAGS 
+CCFLAGS=OS_FLAGS + COMMON_CCFLAGS
 
 STATIC_LIBS =['awtk_global', 'extwidgets', 'widgets', 'awtk_linux_fb', 'base', 'gpinyin', 'streams', 'conf_io', 'compressors', 'miniz', 'ubjson', 'tkc_static', 'nanovg-agge', 'agge', 'nanovg', 'linebreak', 'fribidi'] + OS_LIBS
 if TSLIB_LIB_DIR != '':
@@ -129,9 +129,9 @@ OS_WHOLE_ARCHIVE =' -Wl,--whole-archive -lfribidi -lawtk_global -lextwidgets -lw
 
 LIBS=STATIC_LIBS
 
-CPPPATH=[TK_ROOT, 
-  TK_SRC, 
-  TK_3RD_ROOT, 
+CPPPATH=[TK_ROOT,
+  TK_SRC,
+  TK_3RD_ROOT,
   joinPath(TK_SRC, 'ext_widgets'), 
   joinPath(TK_ROOT, 'tools'), 
   joinPath(TK_3RD_ROOT, 'agge'), 
