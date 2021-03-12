@@ -62,10 +62,38 @@ static ret_t main_loop_linux_destroy(main_loop_t* l) {
   return RET_OK;
 }
 
-ret_t input_dispatch_to_main_loop(void* ctx, const event_queue_req_t* e, const char* msg) {
-  main_loop_queue_event((main_loop_t*)ctx, e);
-  input_dispatch_print(ctx, e, msg);
+ret_t input_dispatch_to_main_loop(void* ctx, const event_queue_req_t* evt, const char* msg) {
+  main_loop_t* l = (main_loop_t*)ctx;
+  event_queue_req_t event = *evt;
+  event_queue_req_t* e = &event;
 
+  if (l != NULL && l->queue_event != NULL) {
+    switch (e->event.type) {
+      case EVT_KEY_DOWN:
+      case EVT_KEY_UP:
+      case EVT_KEY_LONG_PRESS: {
+        e->event.size = sizeof(e->key_event);
+        break;
+      }
+      case EVT_POINTER_DOWN:
+      case EVT_POINTER_MOVE:
+      case EVT_POINTER_UP: {
+        e->event.size = sizeof(e->pointer_event);
+        break;
+      }
+      case EVT_WHEEL: {
+        e->event.size = sizeof(e->wheel_event);
+        break;
+      }
+      default:
+        break;
+    }
+
+    main_loop_queue_event(l, e);
+    input_dispatch_print(ctx, e, msg);
+  } else {
+    return RET_BAD_PARAMS;
+  }
   return RET_OK;
 }
 
@@ -75,9 +103,15 @@ static tk_thread_t* s_mice_thread = NULL;
 static tk_thread_t* s_ts_thread = NULL;
 
 static void on_app_exit(void) {
-  tk_thread_destroy(s_kb_thread);
-  tk_thread_destroy(s_mice_thread);
-  tk_thread_destroy(s_ts_thread);
+  if (s_kb_thread != NULL) {
+    tk_thread_destroy(s_kb_thread);
+  }
+  if (s_mice_thread != NULL) {
+    tk_thread_destroy(s_mice_thread);
+  }
+  if (s_ts_thread != NULL) {
+    tk_thread_destroy(s_ts_thread);
+  }
 }
 
 main_loop_t* main_loop_init(int w, int h) {
@@ -98,12 +132,12 @@ main_loop_t* main_loop_init(int w, int h) {
   s_ts_thread =
       tslib_thread_run(TS_DEVICE_FILENAME, input_dispatch_to_main_loop, loop, lcd->w, lcd->h);
 #endif /*HAS_TSLIB*/
-/*
+
   s_kb_thread =
       input_thread_run(KB_DEVICE_FILENAME, input_dispatch_to_main_loop, loop, lcd->w, lcd->h);
   s_mice_thread =
       mouse_thread_run(MICE_DEVICE_FILENAME, input_dispatch_to_main_loop, loop, lcd->w, lcd->h);
-*/
+
   s_lcd = lcd;
 
   atexit(on_app_exit);
