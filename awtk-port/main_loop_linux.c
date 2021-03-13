@@ -150,12 +150,13 @@ main_loop_t* main_loop_init(int w, int h) {
   s_ts_thread =
       tslib_thread_run(TS_DEVICE_FILENAME, input_dispatch_to_main_loop, loop, lcd->w, lcd->h);
 #endif /*HAS_TSLIB*/
-
+/*
   s_kb_thread =
       input_thread_run(KB_DEVICE_FILENAME, input_dispatch_to_main_loop, loop, lcd->w, lcd->h);
   s_mice_thread =
       mouse_thread_run(MICE_DEVICE_FILENAME, input_dispatch_to_main_loop, loop, lcd->w, lcd->h);
 
+*/
 
   atexit(on_app_exit);
 

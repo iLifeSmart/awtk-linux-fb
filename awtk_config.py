@@ -89,7 +89,7 @@ OS_CPPPATH=[]
 OS_LINKFLAGS=''
 OS_SUBSYSTEM_CONSOLE=''
 OS_SUBSYSTEM_WINDOWS=''
-OS_FLAGS='-Wall -Os '
+OS_FLAGS='-Wall -O2 '
 #OS_FLAGS='-g -Wall -Os -mfloat-abi=hard '
 
 #for build tslib
@@ -97,9 +97,9 @@ OS_FLAGS='-Wall -Os '
 #TSLIB_LIB_DIR=joinPath(TK_LINUX_FB_ROOT, '3rd/tslib/src/.libs')
 
 #for prebuild tslib
-TSLIB_LIB_DIR='/opt/28x/tslib/lib'
-TSLIB_INC_DIR='/opt/28x/tslib/include'
-TOOLS_PREFIX='/opt/28x/gcc-4.4.4-glibc-2.11.1-multilib-1.0/arm-fsl-linux-gnueabi/bin/arm-linux-'
+TSLIB_LIB_DIR='/root/nano/buildroot-2017.08/output/build/tslib-1.21/src/.libs/'
+TSLIB_INC_DIR='/root/nano/buildroot-2017.08/output/build/tslib-1.21/src/'
+TOOLS_PREFIX='/root/nano/buildroot-2017.08/output/host/bin/arm-none-linux-gnueabi-'
 #TOOLS_PREFIX='/opt/poky/1.7/sysroots/x86_64-pokysdk-linux/usr/bin/arm-poky-linux-gnueabi/arm-poky-linux-gnueabi-'
 
 #TSLIB_LIB_DIR=''
@@ -156,7 +156,7 @@ elif LCD_DEICES =='egl_for_rpi' :
   OS_LIBS=OS_LIBS + [ 'brcmEGL', 'brcmGLESv2', 'bcm_host' ]
   COMMON_CCFLAGS += ' -DWITH_GLAD_SPECIAL_OPENGL_LIB=\\\"\"/opt/vc/lib/libbrcmGLESv2.so\\\"\" '
 
-COMMON_CCFLAGS = COMMON_CCFLAGS + ' -DLINUX -DHAS_PTHREAD -DENABLE_CURSOR -fPIC '
+COMMON_CCFLAGS = COMMON_CCFLAGS + ' -DLINUX -DHAS_PTHREAD -fPIC '
 COMMON_CCFLAGS=COMMON_CCFLAGS+' -DWITH_DATA_READER_WRITER=1 '
 COMMON_CCFLAGS=COMMON_CCFLAGS+' -DWITH_EVENT_RECORDER_PLAYER=1 '
 COMMON_CCFLAGS = COMMON_CCFLAGS + ' -DWITH_WIDGET_TYPE_CHECK=1 '

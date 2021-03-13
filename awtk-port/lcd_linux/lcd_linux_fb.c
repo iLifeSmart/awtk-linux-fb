@@ -58,7 +58,8 @@ static void on_app_exit(void) {
     sleep_ms(16);
   }
   if (s_ttyfd >= 0) {
-    ioctl(s_ttyfd, KDSETMODE, KD_TEXT);
+//hack by lifesmart
+//    ioctl(s_ttyfd, KDSETMODE, KD_TEXT);
   }
 
   log_info("wait for display thread quited \r\n");
