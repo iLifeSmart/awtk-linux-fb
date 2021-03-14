@@ -46,6 +46,9 @@ if APP_ROOT == '':
 else:
   APP_PROJ_VAR = []
 
+if awtk.lcd_deices_is_egl(os.environ['LCD_DEICES']) :
+  APP_PROJ_VAR += [awtk.joinPath(TK_ROOT_VAR, '3rd/glad/SConscript')]
+
 SConscriptFiles=[
   awtk.joinPath(TK_ROOT_VAR, '3rd/nanovg/SConscript'),
   awtk.joinPath(TK_ROOT_VAR, '3rd/cjson/SConscript'),
@@ -57,7 +60,9 @@ SConscriptFiles=[
   awtk.joinPath(TK_ROOT_VAR, '3rd/miniz/SConscript'),
   awtk.joinPath(TK_ROOT_VAR, 'src/SConscript'),
   awtk.joinPath(TK_ROOT_VAR, 'src/streams/SConscript'),
+  awtk.joinPath(TK_ROOT_VAR, 'src/csv/SConscript'),
   awtk.joinPath(TK_ROOT_VAR, 'src/conf_io/SConscript'),
+  awtk.joinPath(TK_ROOT_VAR, 'src/hal/SConscript'),
   awtk.joinPath(TK_ROOT_VAR, 'src/ubjson/SConscript'),
   awtk.joinPath(TK_ROOT_VAR, 'src/compressors/SConscript'),
   awtk.joinPath(TK_ROOT_VAR, 'tools/common/SConscript'), 

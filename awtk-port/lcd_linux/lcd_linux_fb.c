@@ -35,7 +35,7 @@
 #include "lcd/lcd_mem_bgra8888.h"
 #include "lcd/lcd_mem_rgba8888.h"
 
-#ifndef WITH_LINUX_DRM
+#if !defined(WITH_LINUX_DRM) && !defined(WITH_LINUX_DRM)
 
 #ifndef DISPLAY_WAIT_TIME
 #define DISPLAY_WAIT_TIME 5000
@@ -58,7 +58,8 @@ static void on_app_exit(void) {
     sleep_ms(16);
   }
   if (s_ttyfd >= 0) {
-    ioctl(s_ttyfd, KDSETMODE, KD_TEXT);
+//hack by lifesmart
+//    ioctl(s_ttyfd, KDSETMODE, KD_TEXT);
   }
 
   log_info("wait for display thread quited \r\n");
@@ -349,4 +350,4 @@ lcd_t* lcd_linux_fb_create(const char* filename) {
   return lcd;
 }
 
-#endif /*no WITH_LINUX_DRM*/
+#endif
