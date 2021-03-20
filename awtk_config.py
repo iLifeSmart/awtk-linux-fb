@@ -8,7 +8,7 @@ def joinPath(root, subdir):
   return os.path.normpath(os.path.join(root, subdir))
 
 def lcd_deices_is_egl(lcd_deices):
-  if lcd_deices =='egl_for_fsl' or lcd_deices =='egl_for_x11' or lcd_deices =='egl_for_rpi' :
+  if lcd_deices =='egl_for_fsl' or lcd_deices =='egl_for_x11' or lcd_deices =='egl_for_gbm' :
     return True
   return False
 
@@ -34,7 +34,7 @@ LCD_DEICES='fb'
 # LCD_DEICES='drm'
 # LCD_DEICES='egl_for_fsl'
 # LCD_DEICES='egl_for_x11'
-# LCD_DEICES='egl_for_rpi'
+# LCD_DEICES='egl_for_gbm'
 
 if LCD_DEICES =='fb' or LCD_DEICES =='drm' :
   LCD='LINUX_FB'
@@ -49,7 +49,7 @@ elif lcd_deices_is_egl(LCD_DEICES) :
 #INPUT_ENGINE='t9ext'
 INPUT_ENGINE='pinyin'
 
-COMMON_CCFLAGS=' -DHAS_STD_MALLOC -DHAS_STDIO -DWITH_VGCANVAS -DWITH_UNICODE_BREAK -DLINUX'
+COMMON_CCFLAGS=' -DHAS_STD_MALLOC -DHAS_STDIO -DHAS_FAST_MEMCPY -DWITH_VGCANVAS -DWITH_UNICODE_BREAK -DLINUX'
 COMMON_CCFLAGS=COMMON_CCFLAGS+' -DLOAD_ASSET_WITH_MMAP=1 '
 COMMON_CCFLAGS=COMMON_CCFLAGS+' -DWITH_ASSET_LOADER -DWITH_FS_RES -DHAS_GET_TIME_US64=1 ' 
 COMMON_CCFLAGS=COMMON_CCFLAGS+' -DSTBTT_STATIC -DSTB_IMAGE_STATIC -DWITH_STB_IMAGE -DWITH_STB_FONT -DWITH_TEXT_BIDI=1 '
@@ -131,7 +131,7 @@ OS_LIBS = ['stdc++', 'pthread', 'rt', 'm', 'dl']
 #AR=TOOLS_PREFIX+'arm-linux-androideabi-ar'
 #STRIP=TOOLS_PREFIX+'arm-linux-androideabi-strip'
 #RANLIB=TOOLS_PREFIX+"arm-linux-androideabi-ranlib"
-#OS_LINKFLAGS='-static -Wl,--allow-multiple-definition '
+#OS_LINKFLAGS=' -Wl,--allow-multiple-definition '
 #OS_LIBS = ['stdc++', 'm']
 #OS_FLAGS='-Wall -Os -DFB_DEVICE_FILENAME=\\\"\"/dev/graphics/fb0\\\"\" '
 
@@ -149,12 +149,10 @@ elif LCD_DEICES =='egl_for_x11' :
   #for egl for fsl
   OS_FLAGS=OS_FLAGS + ' -fPIC '
   OS_LIBS=OS_LIBS + [ 'X11', 'EGL', 'GLESv2' ]
-elif LCD_DEICES =='egl_for_rpi' :
-  #for egl for rpi
-  OS_LIBPATH += ['/opt/vc/lib']
-  OS_CPPPATH += ['/opt/vc/include']
-  OS_LIBS=OS_LIBS + [ 'brcmEGL', 'brcmGLESv2', 'bcm_host' ]
-  COMMON_CCFLAGS += ' -DWITH_GLAD_SPECIAL_OPENGL_LIB=\\\"\"/opt/vc/lib/libbrcmGLESv2.so\\\"\" '
+elif LCD_DEICES =='egl_for_gbm' :
+  #for egl for gbm
+  OS_CPPPATH += ['/usr/include/libdrm', '/usr/include/GLES2']
+  OS_LIBS=OS_LIBS + [ 'drm', 'gbm', 'EGL', 'GLESv2' ]
 
 COMMON_CCFLAGS = COMMON_CCFLAGS + ' -DLINUX -DHAS_PTHREAD -fPIC '
 COMMON_CCFLAGS=COMMON_CCFLAGS+' -DWITH_DATA_READER_WRITER=1 '
