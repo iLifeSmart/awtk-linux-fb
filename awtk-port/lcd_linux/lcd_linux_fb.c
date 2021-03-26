@@ -141,11 +141,14 @@ static void on_signal_int(int sig) {
 static ret_t (*lcd_mem_linux_flush_defalut)(lcd_t* lcd);
 static ret_t lcd_mem_linux_flush(lcd_t* lcd) {
   fb_info_t* fb = (fb_info_t*)(lcd->impl_data);
-  fb_sync(fb);
 
+  //fb_sync(fb);
   if (lcd_mem_linux_flush_defalut) {
     lcd_mem_linux_flush_defalut(lcd);
   }
+  //hack by lifesmart
+  fb_sync(fb);
+
   return RET_OK;
 }
 
@@ -250,7 +253,6 @@ static lcd_t* lcd_linux_create_swappable(fb_info_t* fb) {
   }
 
   if (lcd != NULL) {
-
     lcd->swap = lcd_mem_linux_wirte_buff;
     lcd->flush = lcd_mem_linux_wirte_buff;
     ((lcd_mem_t*)lcd)->own_offline_fb = TRUE;
