@@ -169,7 +169,7 @@ LINKFLAGS=OS_LINKFLAGS;
 LIBPATH=[LIB_DIR, BIN_DIR] + OS_LIBPATH
 CCFLAGS=OS_FLAGS + COMMON_CCFLAGS 
 
-STATIC_LIBS =['awtk_global', 'extwidgets', 'widgets', 'awtk_linux_fb', 'base', 'gpinyin', 'streams', 'conf_io', 'hal', 'csv', 'compressors', 'miniz', 'ubjson', 'tkc_static', 'linebreak', 'fribidi']
+STATIC_LIBS =['awtk_global', 'extwidgets', 'widgets', 'awtk_linux_fb', 'base', 'gpinyin', 'streams', 'conf_io', 'hal', 'csv', 'compressors', 'miniz', 'ubjson', 'tkc_static', 'linebreak', 'mbedtls', 'fribidi']
 if TSLIB_LIB_DIR != '':
   SHARED_LIBS=['awtk', 'ts'] + OS_LIBS;
 else:
@@ -182,7 +182,7 @@ elif lcd_deices_is_egl(LCD_DEICES) :
   STATIC_LIBS = STATIC_LIBS + ['glad', 'nanovg']  + OS_LIBS
   AWTK_DLL_DEPS_LIBS = ['glad', 'nanovg'] + OS_LIBS
 
-OS_WHOLE_ARCHIVE =' -Wl,--whole-archive -lfribidi -lawtk_global -lextwidgets -lwidgets -lawtk_linux_fb -lbase -lgpinyin -ltkc_static -lstreams -lconf_io -lhal -lcsv -lubjson -lcompressors -lminiz -llinebreak -Wl,--no-whole-archive'
+OS_WHOLE_ARCHIVE =' -Wl,--whole-archive -lfribidi -lawtk_global -lextwidgets -lwidgets -lawtk_linux_fb -lbase -lgpinyin -ltkc_static -lstreams -lconf_io -lhal -lcsv -lubjson -lcompressors -lmbedtls -lminiz -llinebreak -Wl,--no-whole-archive'
 
 LIBS=STATIC_LIBS
 
@@ -199,6 +199,8 @@ CPPPATH=[TK_ROOT,
   joinPath(TK_3RD_ROOT, 'nanovg'), 
   joinPath(TK_3RD_ROOT, 'nanovg/gl'), 
   joinPath(TK_3RD_ROOT, 'nanovg/base'), 
+  joinPath(TK_3RD_ROOT, 'mbedtls/include'), 
+  joinPath(TK_3RD_ROOT, 'mbedtls/3rdparty/everest/include'), 
   joinPath(TK_3RD_ROOT, 'fribidi'), 
   joinPath(TK_3RD_ROOT, 'nanovg/base'), 
   joinPath(TK_3RD_ROOT, 'libunibreak'), 
