@@ -2,6 +2,8 @@ import os
 import platform
 import shutil
 import atexit
+shutil.NatureType = ARGUMENTS.get('NatureType', 'f1c200s')
+print(shutil.NatureType)
 import awtk_config as awtk
 
 APP_CCFLAGS = ' '
@@ -49,7 +51,7 @@ else:
 if awtk.lcd_devices_is_egl(os.environ['LCD_DEVICES']) :
   APP_PROJ_VAR += [awtk.joinPath(TK_ROOT_VAR, '3rd/glad/SConscript')]
 
-SConscriptFiles=[
+SConscriptFiles=awtk.NANOVG_BACKEND_PROJS + [
   awtk.joinPath(TK_ROOT_VAR, '3rd/mbedtls/SConscript'),
   awtk.joinPath(TK_ROOT_VAR, '3rd/nanovg/SConscript'),
   awtk.joinPath(TK_ROOT_VAR, '3rd/cjson/SConscript'),
