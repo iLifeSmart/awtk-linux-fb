@@ -19,6 +19,8 @@
  *
  */
 
+#ifdef WITH_LINUX_FB
+
 #include <signal.h>
 #include "fb_info.h"
 #include "tkc/mem.h"
@@ -37,8 +39,6 @@
 #include "lcd/lcd_mem_rgba8888.h"
 #include "lcd/lcd_mem_bgr888.h"
 #include "lcd/lcd_mem_rgb888.h"
-
-#if !defined(WITH_LINUX_DRM) && !defined(WITH_LINUX_DRM)
 
 #define __FB_SUP_RESIZE    1
 #define __FB_WAIT_VSYNC    1
@@ -131,9 +131,9 @@ static ret_t lcd_mem_linux_resize(lcd_t* lcd, wh_t w, wh_t h, uint32_t line_leng
   ret = fb_resize_reopen(fb, w, h);
   if (!mem->own_offline_fb) {
     // mem->own_offline_fb=1 means lcd_mem_special_create will manage(alloc/free) it's own offline fb mem
-    mem->offline_fb = fb->fbmem_offline;
+    lcd_mem_set_offline_fb(mem, fb->fbmem_offline);
   }
-  mem->online_fb = (uint8_t*)(fb->fbmem0);
+  lcd_mem_set_online_fb(mem, (uint8_t*)(fb->fbmem0));
   lcd_mem_set_line_length(lcd, fb_line_length(fb));
 
   if (lcd_mem_linux_resize_defalut && ret == RET_OK) {
@@ -183,41 +183,37 @@ static ret_t lcd_linux_flush(lcd_t* base, int fbid) {
   int fb_nr = fb_number(fb);
   uint32_t size = fb_size(fb);
   lcd_mem_t* lcd = (lcd_mem_t*)base;
+  const dirty_rects_t* dirty_rects = NULL;
   lcd_orientation_t o = system_info()->lcd_orientation;
 
   return_value_if_fail(lcd != NULL && fb != NULL && fbid < fb_nr, RET_BAD_PARAMS);
 
   buff = fb->fbmem0 + size * fbid;
-  if (o == LCD_ORIENTATION_0) {
-    bitmap_t online_fb;
-    bitmap_t offline_fb;
-    rect_t r = {0, 0, fb_width(fb), fb_height(fb)};
 
-    lcd_linux_init_drawing_fb(lcd, &offline_fb);
-    lcd_linux_init_online_fb(lcd, &online_fb, buff, fb_width(fb), fb_height(fb), fb_line_length(fb));
+  bitmap_t online_fb;
+  bitmap_t offline_fb;
+  lcd_linux_init_drawing_fb(lcd, &offline_fb);
+  lcd_linux_init_online_fb(lcd, &online_fb, buff, fb_width(fb), fb_height(fb), fb_line_length(fb));
+  
+  // add current online buff to the dirty manager, and notify all managed buff update/merge with the base dirty rect
+  lcd_fb_dirty_rects_add_fb_info(&(lcd->fb_dirty_rects_list), buff);
+  lcd_fb_dirty_rects_update_all_fb_dirty_rects(&(lcd->fb_dirty_rects_list), base->dirty_rects);
 
-    image_copy(&online_fb, &offline_fb, &r, r.x, r.y);
-  } else {
-    rect_t r = {0};
-    bitmap_t online_fb;
-    bitmap_t offline_fb;
-    if (o == LCD_ORIENTATION_180) {
-      r.x = 0;
-      r.y = 0;
-      r.w = fb_width(fb);
-      r.h = fb_height(fb);
-    } else {
-      r.x = 0;
-      r.y = 0;
-      r.w = fb_height(fb);
-      r.h = fb_width(fb);
+  // get the merged dirty rects of current online buff, and then copy each small rects from offline fb
+  dirty_rects = lcd_fb_dirty_rects_get_dirty_rects_by_fb(&(lcd->fb_dirty_rects_list), buff);
+  if (dirty_rects != NULL && dirty_rects->nr > 0) {
+    for (int i = 0; i < dirty_rects->nr; i++) {
+      const rect_t* dr = (const rect_t*)dirty_rects->rects + i;
+      if (o == LCD_ORIENTATION_0) {
+        image_copy(&online_fb, &offline_fb, dr, dr->x, dr->y);
+      } else {
+        image_rotate(&online_fb, &offline_fb, dr, o);
+      }
     }
-
-    lcd_linux_init_drawing_fb(lcd, &offline_fb);
-    lcd_linux_init_online_fb(lcd, &online_fb, buff, fb_width(fb), fb_height(fb), fb_line_length(fb));
-
-    image_rotate(&online_fb, &offline_fb, &r, o);
   }
+  
+  // reset current online buff dirty rect to empty, because all new contnet has copyed from offline fb
+  lcd_fb_dirty_rects_reset_dirty_rects_by_fb(&(lcd->fb_dirty_rects_list), buff);
   return RET_OK;
 }
 
@@ -550,4 +546,4 @@ lcd_t* lcd_linux_fb_create(const char* filename) {
   return lcd;
 }
 
-#endif
+#endif /*WITH_LINUX_FB*/
