@@ -50,7 +50,7 @@ else:
     NANOVG_BACKEND='AGGE'
   elif lcd_devices_is_egl(LCD_DEVICES) :
     LCD='FB_GL'
-    NANOVG_BACKEND=''
+    NANOVG_BACKEND='GLES2'
 
 #INPUT_ENGINE='null'
 #INPUT_ENGINE='spinyin'
@@ -74,7 +74,7 @@ else:
   elif LCD_DEVICES =='drm' :
     COMMON_CCFLAGS=COMMON_CCFLAGS+' -DWITH_NANOVG_AGGE -DWITH_LINUX_DRM '
   elif lcd_devices_is_egl(LCD_DEVICES) :
-    COMMON_CCFLAGS=COMMON_CCFLAGS+' -DWITH_NANOVG_GLES2 -DWITH_NANOVG_GL -DWITH_NANOVG_GPU -DWITH_LINUX_EGL '
+    COMMON_CCFLAGS=COMMON_CCFLAGS+' -DWITH_GPU_GL -DWITH_GPU_GLES2 -DWITH_GPU -DWITH_LINUX_EGL '
 
 
 
@@ -104,8 +104,8 @@ OS_CPPPATH=[]
 OS_LINKFLAGS=''
 OS_SUBSYSTEM_CONSOLE=''
 OS_SUBSYSTEM_WINDOWS=''
-OS_FLAGS='-Wall -O2 '
-#OS_FLAGS='-g -Wall -Os -mfloat-abi=hard '
+OS_FLAGS='-Wall -O2 -fno-strict-aliasing'
+#OS_FLAGS='-g -Wall -Os -mfloat-abi=hard -fno-strict-aliasing'
 
 #for build tslib
 #TSLIB_INC_DIR=joinPath(TK_LINUX_FB_ROOT, '3rd/tslib/src')
@@ -208,6 +208,7 @@ else:
     STATIC_LIBS = STATIC_LIBS + ['nanovg-agge', 'agge', 'nanovg']  + OS_LIBS
     AWTK_DLL_DEPS_LIBS = ['nanovg-agge', 'agge', 'nanovg'] + OS_LIBS
   elif lcd_devices_is_egl(LCD_DEVICES) :
+    CCFLAGS += ' -DWITH_NANOVG_GLES2 -DWITH_NANOVG_GL -DWITH_NANOVG_GPU '
     STATIC_LIBS = STATIC_LIBS + ['glad', 'nanovg']  + OS_LIBS
     AWTK_DLL_DEPS_LIBS = ['glad', 'nanovg'] + OS_LIBS
 
