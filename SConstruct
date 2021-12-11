@@ -25,6 +25,7 @@ if len (APP_ROOT) > 0:
     exit(0)
 
 env = DefaultEnvironment(CCFLAGS = awtk.CCFLAGS + APP_CCFLAGS, 
+  ENV = os.environ,
   CFLAGS = awtk.CFLAGS,
   CC=awtk.CC,
   CXX=awtk.CXX,
@@ -62,6 +63,9 @@ SConscriptFiles=awtk.NANOVG_BACKEND_PROJS + [
   awtk.joinPath(TK_ROOT_VAR, '3rd/libunibreak/SConscript'),
   awtk.joinPath(TK_ROOT_VAR, '3rd/miniz/SConscript'),
   awtk.joinPath(TK_ROOT_VAR, 'src/SConscript'),
+  awtk.joinPath(TK_ROOT_VAR, 'src/xml/SConscript'),
+  awtk.joinPath(TK_ROOT_VAR, 'src/charset/SConscript'),
+  awtk.joinPath(TK_ROOT_VAR, 'src/fscript_ext/SConscript'),
   awtk.joinPath(TK_ROOT_VAR, 'src/streams/SConscript'),
   awtk.joinPath(TK_ROOT_VAR, 'src/csv/SConscript'),
   awtk.joinPath(TK_ROOT_VAR, 'src/conf_io/SConscript'),

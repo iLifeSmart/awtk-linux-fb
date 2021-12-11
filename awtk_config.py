@@ -2,6 +2,9 @@ import os
 import platform
 import shutil
 
+from awtk_config_common import TKC_STATIC_LIBS
+from awtk_config_common import joinPath, toWholeArchive, genIdlAndDefEx, setEnvSpawn,genDllLinkFlags,copySharedLib
+
 OS_NAME = platform.system()
 
 def joinPath(root, subdir):
@@ -125,8 +128,8 @@ else:
 #TOOLS_PREFIX='/opt/poky/1.7/sysroots/x86_64-pokysdk-linux/usr/bin/arm-poky-linux-gnueabi/arm-poky-linux-gnueabi-'
 
 #for qemu
-#TOOLS_PREFIX='/opt/qemu/buildroot-2021.02.2/output/host/bin/arm-linux-'
-#TSLIB_LIB_DIR=''
+TOOLS_PREFIX='/opt/qemu/buildroot-2021.02.2/output/host/bin/arm-linux-'
+TSLIB_LIB_DIR=''
 
 
 #TSLIB_LIB_DIR=''
@@ -194,7 +197,7 @@ LINKFLAGS=OS_LINKFLAGS;
 LIBPATH=[LIB_DIR, BIN_DIR] + OS_LIBPATH
 CCFLAGS=OS_FLAGS + COMMON_CCFLAGS 
 
-STATIC_LIBS =['awtk_global', 'extwidgets', 'widgets', 'awtk_linux_fb', 'base', 'gpinyin', 'streams', 'conf_io', 'hal', 'csv', 'compressors', 'miniz', 'ubjson', 'tkc_static', 'linebreak', 'mbedtls', 'fribidi']
+STATIC_LIBS =['awtk_global', 'extwidgets', 'widgets', 'awtk_linux_fb', 'base', 'gpinyin', 'linebreak', 'fribidi']
 if TSLIB_LIB_DIR != '':
   SHARED_LIBS=['awtk', 'ts'] + OS_LIBS;
 else:
@@ -212,9 +215,10 @@ else:
     STATIC_LIBS = STATIC_LIBS + ['glad', 'nanovg']  + OS_LIBS
     AWTK_DLL_DEPS_LIBS = ['glad', 'nanovg'] + OS_LIBS
 
-OS_WHOLE_ARCHIVE =' -Wl,--whole-archive -lfribidi -lawtk_global -lextwidgets -lwidgets -lawtk_linux_fb -lbase -lgpinyin -ltkc_static -lstreams -lconf_io -lhal -lcsv -lubjson -lcompressors -lmbedtls -lminiz -llinebreak -Wl,--no-whole-archive'
 
-LIBS=STATIC_LIBS
+LIBS=STATIC_LIBS + TKC_STATIC_LIBS
+AWTK_STATIC_LIBS = LIBS
+OS_WHOLE_ARCHIVE =toWholeArchive(LIBS)
 
 CPPPATH=[TK_ROOT, 
   TK_SRC, 
