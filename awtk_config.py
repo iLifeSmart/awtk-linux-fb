@@ -39,22 +39,18 @@ LCD_DEVICES='fb'
 # LCD_DEVICES='egl_for_x11'
 # LCD_DEVICES='egl_for_gbm'
 
-<<<<<<< HEAD
 if shutil.NatureType=='x2k':
   VGCANVAS='CAIRO'
 else:
   VGCANVAS='NANOVG'
 
 if VGCANVAS == 'CAIRO':
-=======
-NANOVG_BACKEND=''
-VGCANVAS='NANOVG'
-#VGCANVAS='NANOVG_PLUS'
-if LCD_DEVICES =='fb' or LCD_DEVICES =='drm' :
->>>>>>> upstream/master
   LCD='LINUX_FB'
   NANOVG_BACKEND=''
 else:
+  NANOVG_BACKEND=''
+  VGCANVAS='NANOVG'
+  #VGCANVAS='NANOVG_PLUS'
   if LCD_DEVICES =='fb' or LCD_DEVICES =='drm' :
     LCD='LINUX_FB'
     NANOVG_BACKEND='AGGE'
