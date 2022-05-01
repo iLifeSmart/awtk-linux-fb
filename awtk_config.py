@@ -39,12 +39,19 @@ LCD_DEVICES='fb'
 # LCD_DEVICES='egl_for_x11'
 # LCD_DEVICES='egl_for_gbm'
 
+<<<<<<< HEAD
 if shutil.NatureType=='x2k':
   VGCANVAS='CAIRO'
 else:
   VGCANVAS='NANOVG'
 
 if VGCANVAS == 'CAIRO':
+=======
+NANOVG_BACKEND=''
+VGCANVAS='NANOVG'
+#VGCANVAS='NANOVG_PLUS'
+if LCD_DEVICES =='fb' or LCD_DEVICES =='drm' :
+>>>>>>> upstream/master
   LCD='LINUX_FB'
   NANOVG_BACKEND=''
 else:
@@ -66,6 +73,7 @@ COMMON_CCFLAGS=' -DHAS_STD_MALLOC -DHAS_STDIO -DWITH_VGCANVAS -DWITH_UNICODE_BRE
 COMMON_CCFLAGS=COMMON_CCFLAGS+' -DLOAD_ASSET_WITH_MMAP=1 -DWITH_SOCKET=1 '
 COMMON_CCFLAGS=COMMON_CCFLAGS+' -DWITH_ASSET_LOADER -DWITH_FS_RES -DHAS_GET_TIME_US64=1 ' 
 COMMON_CCFLAGS=COMMON_CCFLAGS+' -DSTBTT_STATIC -DSTB_IMAGE_STATIC -DWITH_STB_IMAGE -DWITH_STB_FONT -DWITH_TEXT_BIDI=1 '
+COMMON_CCFLAGS=COMMON_CCFLAGS+' -DAPP_TYPE=APP_MOBILE '
 
 if VGCANVAS == 'CAIRO':
   NANOVG_BACKEND_PROJS=[joinPath(TK_ROOT,'3rd/cairo/SConscript'),joinPath(TK_ROOT,'3rd/pixman/SConscript')];
@@ -192,12 +200,14 @@ COMMON_CCFLAGS = COMMON_CCFLAGS + ' -DWITH_WIDGET_TYPE_CHECK=1 '
 if TSLIB_LIB_DIR != '':
   COMMON_CCFLAGS = COMMON_CCFLAGS + ' -DHAS_TSLIB '
 
+OS_PROJECTS=[]
 CFLAGS=COMMON_CFLAGS
 LINKFLAGS=OS_LINKFLAGS;
 LIBPATH=[LIB_DIR, BIN_DIR] + OS_LIBPATH
 CCFLAGS=OS_FLAGS + COMMON_CCFLAGS 
 
 STATIC_LIBS =['awtk_global', 'extwidgets', 'widgets', 'awtk_linux_fb', 'base', 'gpinyin', 'linebreak', 'fribidi']
+STATIC_LIBS += TKC_STATIC_LIBS
 if TSLIB_LIB_DIR != '':
   SHARED_LIBS=['awtk', 'ts'] + OS_LIBS;
 else:
@@ -206,7 +216,10 @@ else:
 if VGCANVAS == 'CAIRO':
     STATIC_LIBS = STATIC_LIBS + ['cairo', 'pixman']  + OS_LIBS
     AWTK_DLL_DEPS_LIBS = ['cairo', 'pixman'] + OS_LIBS
-else:
+elif VGCANVAS == 'NANOVG':
+  TK_ROOT_VAR = joinPath(VAR_DIR, 'awtk')
+  OS_PROJECTS = [ joinPath(TK_ROOT_VAR, '3rd/nanovg/SConscript') ]
+  OS_CPPPATH += [joinPath(TK_3RD_ROOT, 'nanovg'),  joinPath(TK_3RD_ROOT, 'nanovg/gl'),  joinPath(TK_3RD_ROOT, 'nanovg/base') ]
   if LCD_DEVICES =='fb' or LCD_DEVICES =='drm' :
     STATIC_LIBS = STATIC_LIBS + ['nanovg-agge', 'agge', 'nanovg']  + OS_LIBS
     AWTK_DLL_DEPS_LIBS = ['nanovg-agge', 'agge', 'nanovg'] + OS_LIBS
@@ -214,9 +227,17 @@ else:
     CCFLAGS += ' -DWITH_NANOVG_GLES2 -DWITH_NANOVG_GL -DWITH_NANOVG_GPU '
     STATIC_LIBS = STATIC_LIBS + ['glad', 'nanovg']  + OS_LIBS
     AWTK_DLL_DEPS_LIBS = ['glad', 'nanovg'] + OS_LIBS
+elif VGCANVAS == 'NANOVG_PLUS':
+  TK_ROOT_VAR = joinPath(VAR_DIR, 'awtk')
+  OS_PROJECTS = [ joinPath(TK_ROOT_VAR, '3rd/nanovg_plus/SConscript') ]
+  OS_CPPPATH += [joinPath(TK_3RD_ROOT, 'nanovg_plus/gl'), joinPath(TK_3RD_ROOT, 'nanovg_plus/base') ]
+  if lcd_devices_is_egl(LCD_DEVICES) :
+    CCFLAGS += ' -DWITH_NANOVG_PLUS_GPU -DWITH_NANOVG_GPU -DWITH_GPU_GL -DWITH_GPU_GLES2 -DNVGP_GLES2 '
+    STATIC_LIBS = STATIC_LIBS + ['glad', 'nanovg_plus']  + OS_LIBS
+    AWTK_DLL_DEPS_LIBS = ['glad', 'nanovg_plus'] + OS_LIBS
 
 
-LIBS=STATIC_LIBS + TKC_STATIC_LIBS
+LIBS=STATIC_LIBS
 AWTK_STATIC_LIBS = LIBS
 OS_WHOLE_ARCHIVE =toWholeArchive(LIBS)
 
@@ -232,13 +253,9 @@ CPPPATH=[TK_ROOT,
   joinPath(TK_3RD_ROOT, 'cairo'),
   joinPath(TK_3RD_ROOT, 'agge'), 
   joinPath(TK_3RD_ROOT, 'agg/include'), 
-  joinPath(TK_3RD_ROOT, 'nanovg'), 
-  joinPath(TK_3RD_ROOT, 'nanovg/gl'), 
-  joinPath(TK_3RD_ROOT, 'nanovg/base'), 
   joinPath(TK_3RD_ROOT, 'mbedtls/include'), 
   joinPath(TK_3RD_ROOT, 'mbedtls/3rdparty/everest/include'), 
   joinPath(TK_3RD_ROOT, 'fribidi'), 
-  joinPath(TK_3RD_ROOT, 'nanovg/base'), 
   joinPath(TK_3RD_ROOT, 'libunibreak'), 
   joinPath(TK_3RD_ROOT, 'gpinyin/include'), 
   joinPath(TK_3RD_ROOT, 'gtest/googletest'), 
@@ -276,6 +293,7 @@ elif lcd_devices_is_egl(LCD_DEVICES) :
 os.environ['OS_WHOLE_ARCHIVE'] = OS_WHOLE_ARCHIVE;
 os.environ['AWTK_DLL_DEPS_LIBS'] = ';'.join(AWTK_DLL_DEPS_LIBS)
 os.environ['STATIC_LIBS'] = ';'.join(STATIC_LIBS)
+os.environ['CROSS_COMPILE'] = str(not TOOLS_PREFIX == '')
 
 def has_custom_cc():
     return True
