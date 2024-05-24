@@ -44,11 +44,11 @@ env = DefaultEnvironment(CCFLAGS = awtk.CCFLAGS + APP_CCFLAGS,
 TK_ROOT_VAR = awtk.joinPath(awtk.VAR_DIR, 'awtk')
 VariantDir(TK_ROOT_VAR, awtk.TK_ROOT)
 
-if APP_ROOT == '':
-  APP_PROJ_VAR = [awtk.joinPath(TK_ROOT_VAR, 'demos/SConscript')]
-else:
-  APP_PROJ_VAR = []
-
+#if APP_ROOT == '':
+#  APP_PROJ_VAR = [awtk.joinPath(TK_ROOT_VAR, 'demos/SConscript')]
+#else:
+#  APP_PROJ_VAR = []
+APP_PROJ_VAR = []
 if awtk.lcd_devices_is_egl(os.environ['LCD_DEVICES']) :
   APP_PROJ_VAR += [awtk.joinPath(TK_ROOT_VAR, '3rd/glad/SConscript')]
 

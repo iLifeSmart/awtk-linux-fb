@@ -84,7 +84,7 @@ else:
   elif lcd_devices_is_egl(LCD_DEVICES) :
     COMMON_CCFLAGS=COMMON_CCFLAGS+' -DWITH_GPU_GL -DWITH_GPU_GLES2 -DWITH_GPU -DWITH_LINUX_EGL '
 
-
+COMMON_CCFLAGS = COMMON_CCFLAGS + ' -DLSHACK_USE_WEBP=1 '
 
 if INPUT_ENGINE == 't9':
     COMMON_CCFLAGS = COMMON_CCFLAGS + ' -DWITH_IME_T9 '
@@ -124,11 +124,17 @@ if shutil.NatureType=='x2k':
 	TSLIB_LIB_DIR='/x2000/tslib/lib/'
 	TSLIB_INC_DIR='/x2000/tslib/include/'
 	TOOLS_PREFIX='/x2000/ingenic-linux-kernel4.4.94-x2000_v12-v5.0-20201016/prebuilts/toolchains/mips-gcc-glibc/bin/mips-linux-gnu-'
+elif shutil.NatureType=='f1c200sc++17':
+	TARGET_ARCH='arm'
+	TSLIB_LIB_DIR='/root/nano/buildroot-2017.08/output/build/tslib-1.21/src/.libs/'
+	TSLIB_INC_DIR='/root/nano/buildroot-2017.08/output/build/tslib-1.21/src/'
+	TOOLS_PREFIX='/opt/gcc-linaro-7.5.0-2019.12-x86_64_arm-linux-gnueabi/bin/arm-linux-gnueabi-'
 else:
 	TARGET_ARCH='arm'
 	TSLIB_LIB_DIR='/root/nano/buildroot-2017.08/output/build/tslib-1.21/src/.libs/'
 	TSLIB_INC_DIR='/root/nano/buildroot-2017.08/output/build/tslib-1.21/src/'
 	TOOLS_PREFIX='/root/nano/buildroot-2017.08/output/host/bin/arm-none-linux-gnueabi-'
+
 
 #TOOLS_PREFIX='/opt/poky/1.7/sysroots/x86_64-pokysdk-linux/usr/bin/arm-poky-linux-gnueabi/arm-poky-linux-gnueabi-'
 
@@ -153,7 +159,7 @@ LD=TOOLS_PREFIX+'g++',
 AR=TOOLS_PREFIX+'ar',
 RANLIB=TOOLS_PREFIX+'ranlib',
 STRIP=TOOLS_PREFIX+'strip',
-OS_LIBS = ['stdc++', 'pthread', 'rt', 'm', 'dl']
+OS_LIBS = ['webpdecoder', 'stdc++', 'pthread', 'rt', 'm', 'dl']
 
 #for android
 #TSLIB_LIB_DIR=''
@@ -193,6 +199,7 @@ COMMON_CCFLAGS = COMMON_CCFLAGS + ' -DLINUX -DHAS_PTHREAD -fPIC '
 COMMON_CCFLAGS=COMMON_CCFLAGS+' -DWITH_DATA_READER_WRITER=1 '
 COMMON_CCFLAGS=COMMON_CCFLAGS+' -DWITH_EVENT_RECORDER_PLAYER=1 '
 COMMON_CCFLAGS = COMMON_CCFLAGS + ' -DWITH_WIDGET_TYPE_CHECK=1 '
+COMMON_CCFLAGS = COMMON_CCFLAGS + ' -I/x2000/x2000_buildlib/include '
 
 if TSLIB_LIB_DIR != '':
   COMMON_CCFLAGS = COMMON_CCFLAGS + ' -DHAS_TSLIB '
@@ -263,6 +270,8 @@ if TSLIB_LIB_DIR != '':
   LIBS = ['ts'] + LIBS
   LIBPATH = [TSLIB_LIB_DIR] + LIBPATH;
   CPPPATH = [TSLIB_INC_DIR] + CPPPATH;
+
+LIBPATH=LIBPATH + ['/x2000/x2000_buildlib/lib']
 
 os.environ['LCD'] = LCD
 os.environ['LCD_DEVICES'] = LCD_DEVICES
